@@ -687,7 +687,7 @@ where
 	let sys = System::new_all();
 
 	// Abort if another instance is already running
-	let pid_path = extend_pathbuf_and_return(std::env::current_exe().unwrap().parent().unwrap().to_path_buf(), &["gmodpatchtool.pid"]);
+	let pid_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).unwrap_or_else(|| PathBuf::from("."));
 	let running_instance_pid = tokio::fs::read_to_string(&pid_path).await;
 	if let Ok(pid) = running_instance_pid {
 		if let Ok(pid) = pid.parse::<usize>() {
