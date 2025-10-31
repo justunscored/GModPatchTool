@@ -691,13 +691,13 @@ where
 	//let gmpt_data_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).join("gmodpatchtool.pid");
 	
 	fs::create_dir_all(&pid_path).or_else(|e| {
-  if e.kind() == io::ErrorKind::PermissionDenied {
-	let pid_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).join("gmodpatchtool.pid");
-    tokio::fs::create_dir_all(&pid_path).await;
-  } else {
-    Err(e)
-  }
-})
+      if e.kind() == io::ErrorKind::PermissionDenied {
+	    let pid_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).join("gmodpatchtool.pid");
+        tokio::fs::create_dir_all(&pid_path).await;
+      } else {
+        Err(e)
+      }
+    });
 	let running_instance_pid = tokio::fs::read_to_string(&pid_path).await;
 	if let Ok(pid) = running_instance_pid {
 		if let Ok(pid) = pid.parse::<usize>() {
