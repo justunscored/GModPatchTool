@@ -710,7 +710,7 @@ where
 	// Create PID lockfile
 	let pid_write_result = tokio::fs::write(&pid_path, std::process::id().to_string()).await;
 	if let Err(error) = pid_write_result {
-		return Err(AlmightyError::Generic(format!("Another instance of GModPatchTool is already running ({pid}).")));
+		return Err(AlmightyError::Generic(format!("Failed to create gmodpatchtool.pid: {error}")));
 	}
 
 	// Get local version
