@@ -687,7 +687,8 @@ where
 	let sys = System::new_all();
 
 	// Abort if another instance is already running
-	let gmptdata_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).unwrap_or_else(|| PathBuf::from("."));
+	// let gmptdata_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).unwrap_or_else(|| PathBuf::from("."));
+	let gmptdata_path = PathBuf::from(".").unwrap_or_else(|| dirs::data_dir().map(|path| path.join("GModPatchTool")));
 	tokio::fs::create_dir_all(&gmptdata_path).await;
     let pid_path = gmptdata_path.join("gmodpatchtool.pid");
 	let running_instance_pid = tokio::fs::read_to_string(&pid_path).await;
