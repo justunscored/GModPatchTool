@@ -690,9 +690,9 @@ where
 	let pid_path = extend_pathbuf_and_return(std::env::current_exe().unwrap().parent().unwrap().to_path_buf(), &["gmodpatchtool.pid"]);
 	//let gmpt_data_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).join("gmodpatchtool.pid");
 	
-	fs::create_dir_all(&pid_path).or_else(|e| {
+	tokio::fs::create_dir_all(&pid_path).or_else(|e| {
       if e.kind() == io::ErrorKind::PermissionDenied {
-	    let pid_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).join("gmodpatchtool.pid");
+	    let pid_path = dirs::data_dir().map(|path| path.join("GModPatchTool").join("gmodpatchtool.pid"));
         tokio::fs::create_dir_all(&pid_path).await;
       } else {
         Err(e)
