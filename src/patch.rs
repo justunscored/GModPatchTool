@@ -688,6 +688,16 @@ where
 
 	// Abort if another instance is already running
 	let pid_path = extend_pathbuf_and_return(std::env::current_exe().unwrap().parent().unwrap().to_path_buf(), &["gmodpatchtool.pid"]);
+	//let gmpt_data_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).join("gmodpatchtool.pid");
+	
+	fs::create_dir_all(&pid_path).or_else(|e| {
+  if e.kind() == io::ErrorKind::PermissionDenied {
+	let pid_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).join("gmodpatchtool.pid");
+    tokio::fs::create_dir_all(&pid_path).await;
+  } else {
+    Err(e)
+  }
+})
 	let running_instance_pid = tokio::fs::read_to_string(&pid_path).await;
 	if let Ok(pid) = running_instance_pid {
 		if let Ok(pid) = pid.parse::<usize>() {
@@ -700,17 +710,7 @@ where
 	// Create PID lockfile
 	let pid_write_result = tokio::fs::write(&pid_path, std::process::id().to_string()).await;
 	if let Err(error) = pid_write_result {
-		terminal_write(writer, "WARNING: Executable path is not writable, trying data directory now", true, if writer_is_interactive { Some("red") } else { None });
-		let gmptdata_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).unwrap_or_else(|| PathBuf::from("."));
-	    tokio::fs::create_dir_all(&gmptdata_path).await;
-		let pid_path = gmptdata_path.join("gmodpatchtool.pid");
-		let running_instance_pid = tokio::fs::read_to_string(&pid_path).await;
-		if let Ok(pid) = running_instance_pid {
-		if let Ok(pid) = pid.parse::<usize>() {
-			if sys.process(sysinfo::Pid::from(pid)).is_some() {
-				return Err(AlmightyError::Generic(format!("Another instance of GModPatchTool is already running ({pid}).")));
-			}
-		}
+		return Err(AlmightyError::Generic(format!("Another instance of GModPatchTool is already running ({pid}).")));
 	}
 		let data_pid_write_result = tokio::fs::write(&pid_path, std::process::id().to_string()).await;
 		if let Err(error) = data_pid_write_result {
