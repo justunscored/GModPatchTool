@@ -712,11 +712,6 @@ where
 	if let Err(error) = pid_write_result {
 		return Err(AlmightyError::Generic(format!("Another instance of GModPatchTool is already running ({pid}).")));
 	}
-		let data_pid_write_result = tokio::fs::write(&pid_path, std::process::id().to_string()).await;
-		if let Err(error) = data_pid_write_result {
-		  return Err(AlmightyError::Generic(format!("Failed to create gmodpatchtool.pid: {error}")));
-	    }
-	}
 
 	// Get local version
 	let local_version: u32 = env!("CARGO_PKG_VERSION_MAJOR").parse().unwrap();
