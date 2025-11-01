@@ -687,16 +687,15 @@ where
 	let sys = System::new_all();
 
 	// Abort if another instance is already running
-	let pid_dir = std::env::current_exe().unwrap().parent().unwrap();
-	tokio::fs::create_dir_all(&pid_dir).await.or_else(|e| {
+	let pid_payh = extend_pathbuf_and_return(std::env::current_exe().unwrap().parent().unwrap().to_path_buf(), &["gmodpatchtool.pid"]);
+	tokio::fs::create_dir_all(&pid_path.parent()).await.or_else(|e| {
       if e.kind() == io::ErrorKind::PermissionDenied {
-	    let pid_dir = dirs::data_dir().map(|path| path.join("GModPatchTool"));
-        tokio::fs::create_dir_all(&pid_dir);
+	    let pid_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).unwrap().join("gmodpatchtool.pid");
+        tokio::fs::create_dir_all(&pid_path.parent());
       } else {
         Err(e)
       }
     });
-	let pid_path = pid_dir.join("gmodpatchtool.pid");
 	let running_instance_pid = tokio::fs::read_to_string(&pid_path).await;
 	if let Ok(pid) = running_instance_pid {
 		if let Ok(pid) = pid.parse::<usize>() {
