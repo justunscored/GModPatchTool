@@ -692,7 +692,7 @@ where
   } else {
     Err(e)
   }
-})
+});
 	
 	// Abort if another instance is already running
 	let pid_path = extend_pathbuf_and_return(std::env::current_exe().unwrap().parent().unwrap().to_path_buf(), &["gmodpatchtool.pid"]);
