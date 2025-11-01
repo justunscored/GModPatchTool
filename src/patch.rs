@@ -690,7 +690,7 @@ where
 	let pid_dir = std::env::current_exe().unwrap().parent().unwrap();
 	tokio::fs::create_dir_all(&pid_dir).await.or_else(|e| {
       if e.kind() == io::ErrorKind::PermissionDenied {
-	    let pid_dir = dirs::data_dir().map(|path| path.join("GModPatchTool"));
+	    let pid_dir = dirs::data_dir().map(|path| path.join("GModPatchTool").unwrap());
         tokio::fs::create_dir_all(&pid_dir);
       } else {
         Err(e)
