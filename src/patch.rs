@@ -694,10 +694,10 @@ where
         tokio::fs::create_dir_all(&pid_dir);
         let pid_path = pid_dir.unwrap().join("gmodpatchtool.pid");
       } 
-	 if let Err(error) = pid_write_result {
-        return Err(AlmightyError::Generic(format!("Failed to create gmodpatchtool.pid in binary directory: {error}")));
-     }
     });
+	if let Err(error) = pid_write_result {
+        return Err(AlmightyError::Generic(format!("Failed to create gmodpatchtool.pid in binary directory: {error}")));
+    }
 	let running_instance_pid = tokio::fs::read_to_string(&pid_path).await;
 	if let Ok(pid) = running_instance_pid {
 		if let Ok(pid) = pid.parse::<usize>() {
