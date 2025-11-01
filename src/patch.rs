@@ -688,13 +688,13 @@ where
 	
 	// Abort if another instance is already running
 	let pid_path = extend_pathbuf_and_return(std::env::current_exe().unwrap().parent().unwrap().to_path_buf(), &["gmodpatchtool.pid"]);
-    let pid_write_result = tokio::fs::write(&pid_path, std::process::id().to_string()).or_else(|e| {
+    let pid_write_result = fs::write(&pid_path, std::process::id().to_string()).or_else(|e| {
       if e.kind() == io::ErrorKind::PermissionDenied {
 	    let pid_dir = dirs::data_dir().map(|path| path.join("GModPatchTool"));
         tokio::fs::create_dir_all(&pid_dir);
         let pid_path = pid_dir.unwrap().join("gmodpatchtool.pid");
       } else {
-        return Err(AlmightyError::Generic(format!("Failed to create gmodpatchtool.pid in binary directory: {error}")));
+        return Err(AlmightyError::Generic(format!("Failed to create gmodpatchtool.pid in binary directory: ")));
       }
     });
 	let running_instance_pid = tokio::fs::read_to_string(&pid_path).await;
