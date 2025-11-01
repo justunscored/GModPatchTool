@@ -689,15 +689,15 @@ where
 	
 	// Abort if another instance is already running
 	let pid_path = extend_pathbuf_and_return(std::env::current_exe().unwrap().parent().unwrap().to_path_buf(), &["gmodpatchtool.pid"]);
-  tokio::fs::write(&pid_path, std::process::id().to_string()).or_else(|e| {
-    if let Err(error) = pid_write_result {
-	  let pid_dir = dirs::data_dir().map(|path| path.join("GModPatchTool"));
-      tokio::fs::create_dir_all(&pid_dir);
-      let pid_path = pid_dir.unwrap().join("gmodpatchtool.pid");
-    } else {
-      return Err(AlmightyError::Generic(format!("Failed to create gmodpatchtool.pid in binary directory: {error}")));
-    }
-  });
+    let pid_write_result = tokio::fs::write(&pid_path, std::process::id().to_string()).or_else(|e| {
+      if let Err(error) = pid_write_result {
+	    let pid_dir = dirs::data_dir().map(|path| path.join("GModPatchTool"));
+        tokio::fs::create_dir_all(&pid_dir);
+        let pid_path = pid_dir.unwrap().join("gmodpatchtool.pid");
+      } else {
+        return Err(AlmightyError::Generic(format!("Failed to create gmodpatchtool.pid in binary directory: {error}")));
+      }
+    });
 	let running_instance_pid = tokio::fs::read_to_string(&pid_path).await;
 	if let Ok(pid) = running_instance_pid {
 		if let Ok(pid) = pid.parse::<usize>() {
