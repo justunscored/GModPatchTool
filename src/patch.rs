@@ -696,7 +696,7 @@ where
         Err(e)
       }
     });
-	let pid_path = pid_dir.join("gmodpatchtool.pid")
+	let pid_path = pid_dir.join("gmodpatchtool.pid");
 	let running_instance_pid = tokio::fs::read_to_string(&pid_path).await;
 	if let Ok(pid) = running_instance_pid {
 		if let Ok(pid) = pid.parse::<usize>() {
