@@ -689,13 +689,14 @@ where
 	
 	// Abort if another instance is already running
 	let pid_path = extend_pathbuf_and_return(std::env::current_exe().unwrap().parent().unwrap().to_path_buf(), &["gmodpatchtool.pid"]);
-    tokio::fs::create_dir_all(&pid_path).await.or_else(|e| {
-    if e.kind() == io::ErrorKind::PermissionDenied {
-	  let pid_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).unwrap().join("gmodpatchtool.pid");
-      tokio::fs::create_dir_all(&pid_path);
+  tokio::fs::write(&pid_path, std::process::id().to_string()).or_else(|e| {
+    if let Err(error) = pid_write_result {
+	  let pid_dir = dirs::data_dir().map(|path| path.join("GModPatchTool"));
+      tokio::fs::create_dir_all(&pid_dir);
+      let pid_path = pid_dir.unwrap().join("gmodpatchtool.pid");
     } else {
-      Err(e)
-    };
+      return Err(AlmightyError::Generic(format!("Failed to create gmodpatchtool.pid in binary directory: {error}")));
+    }
   });
 	let running_instance_pid = tokio::fs::read_to_string(&pid_path).await;
 	if let Ok(pid) = running_instance_pid {
@@ -705,12 +706,6 @@ where
 			}
 		}
 	}
-
-	// Create PID lockfile
-	let pid_write_result = tokio::fs::write(&pid_path, std::process::id().to_string()).await;
-	if let Err(error) = pid_write_result {
-      return Err(AlmightyError::Generic(format!("Failed to create gmodpatchtool.pid in binary directory: {error}")));
-	};
 
 	// Get local version
 	let local_version: u32 = env!("CARGO_PKG_VERSION_MAJOR").parse().unwrap();
