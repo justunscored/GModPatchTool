@@ -691,7 +691,7 @@ where
 	
 	tokio::fs::create_dir_all(&pid_path).await.or_else(|e| {
       if e.kind() == io::ErrorKind::PermissionDenied {
-	    let pid_path = dirs::data_dir().map(|path| path.join("GModPatchTool").join("gmodpatchtool.pid"));
+	    let pid_path = dirs::data_dir().map(|path| path.join("GModPatchTool").unwrap().join("gmodpatchtool.pid"));
         tokio::fs::create_dir_all(&pid_path);
       } else {
         Err(e)
