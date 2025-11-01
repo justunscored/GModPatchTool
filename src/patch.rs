@@ -689,8 +689,9 @@ where
 	// Abort if another instance is already running
 	let pid_path = extend_pathbuf_and_return(std::env::current_exe().unwrap().parent().unwrap().to_path_buf(), &["gmodpatchtool.pid"]).or_else(|e| {
       if e.kind() == io::ErrorKind::PermissionDenied {
-	    let pid_path = dirs::data_dir().map(|path| path.join("GModPatchTool")).unwrap().join("gmodpatchtool.pid");
-        tokio::fs::create_dir_all(&pid_path.parent());
+	    let pid_dir = dirs::data_dir().map(|path| path.join("GModPatchTool"));
+        tokio::fs::create_dir_all(&pid_path);
+	    let pid_path = pid_dir.join("gmodpatchtoo.pid");
       } else {
         Err(e)
       }
