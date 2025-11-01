@@ -687,7 +687,7 @@ where
 	let sys = System::new_all();
 
 	// Abort if another instance is already running
-	let pid_dir = std::env::current_exe().unwrap().parent());
+	let pid_dir = std::env::current_exe().unwrap().parent();
 	tokio::fs::create_dir_all(&pid_dir).await.or_else(|e| {
       if e.kind() == io::ErrorKind::PermissionDenied {
 	    let pid_dir = dirs::data_dir().map(|path| path.join("GModPatchTool"));
