@@ -685,14 +685,6 @@ where
 {
 	let now = Instant::now();
 	let sys = System::new_all();
-
-	fs::create_dir_all(&path).or_else(|e| {
-  if e.kind() == io::ErrorKind::PermissionDenied {
-    fs::create_dir_all(&fallback_path)
-  } else {
-    Err(e)
-  }
-});
 	
 	// Abort if another instance is already running
 	let pid_path = extend_pathbuf_and_return(std::env::current_exe().unwrap().parent().unwrap().to_path_buf(), &["gmodpatchtool.pid"]);
