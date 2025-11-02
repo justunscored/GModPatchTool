@@ -688,7 +688,7 @@ where
 
 	// Abort if another instance is already running
 	let pid_path = extend_pathbuf_and_return(std::env::current_exe().unwrap().parent().unwrap().to_path_buf(), &["gmodpatchtool.pid"]);
-    let pid_write_result = std::fs::write(&pid_path, std::process::id().to_string()).or_else(|e| {
+    let pid_write_result = match std::fs::write(&pid_path, std::process::id().to_string()).or_else(|e| {
 	  Ok(pid_write_result) => pid_write_result,
 	  Err(error) => {
 	    let pid_dir = dirs::data_dir().map(|path| path.join("GModPatchTool")).unwrap();
