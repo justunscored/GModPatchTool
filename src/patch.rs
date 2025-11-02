@@ -694,7 +694,7 @@ where
 	    let pid_dir = dirs::data_dir().map(|path| path.join("GModPatchTool")).unwrap();
         tokio::fs::create_dir_all(&pid_dir);
         let pid_path = pid_dir.join("gmodpatchtool.pid")
-	 };
+	};
     //if let Err(error) = pid_write_result {
     //  return Err(AlmightyError::Generic(format!("Failed to create gmodpatchtool.pid in binary directory: {error}")))
     //}
